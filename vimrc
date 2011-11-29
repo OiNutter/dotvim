@@ -1,127 +1,135 @@
-" Example Vim configuration.
-" Copy or symlink to ~/.vimrc or ~/_vimrc.
+""
+"" Thanks:
+""   Gary Bernhardt  <destroyallsoftware.com>
+""   Drew Neil  <vimcasts.org>
+""   Tim Pope  <tbaggery.com>
+""   Janus  <github.com/carlhuda/janus>
+""
 
-set nocompatible                  " Must come first because it changes other options.
+set nocompatible
+syntax enable
+set encoding=utf-8
 
-silent! call pathogen#runtime_append_all_bundles()
+call pathogen#infect()
+filetype plugin indent on
 
-set t_Co=256
-syntax enable                     " Turn on syntax highlighting.
-filetype plugin indent on         " Turn on file type detection.
-
-runtime macros/matchit.vim        " Load the matchit plugin.
-
-" Backup directory
-set backupdir=~/.vim/backupfiles,/var/tmp,/tmp,.
-
-" Swapfile directory
-set directory=~/.vim/swapfiles,/var/tmp,/tmp,.
-
-
-set showcmd                       " Display incomplete commands.
-set showmode                      " Display the mode you're in.
+color oinutter
+set nonumber
+set ruler       " show the cursor position all the time
 set cursorline
+set showcmd     " display incomplete commands
 
-set encoding=utf-8 nobomb
+" Allow backgrounding buffers without writing them, and remember marks/undo
+" for backgrounded buffers
+set hidden
 
-set magic " extended regexes
+"" Whitespace
+set nowrap                        " don't wrap lines
+set tabstop=2                     " a tab is two spaces
+set shiftwidth=2                  " an autoindent (with <<) is two spaces
+set expandtab                     " use spaces, not tabs
+set list                          " Show invisible characters
+set backspace=indent,eol,start    " backspace through everything in insert mode
+" List chars
+set listchars=""                  " Reset the listchars
+set listchars=tab:\ \             " a tab should display as "  ", trailing whitespace as "."
+set listchars+=trail:.            " show trailing spaces as dots
+set listchars+=extends:>          " The character to show in the last column when wrap is
+                                  " off and the line continues beyond the right of the screen
+set listchars+=precedes:<         " The character to show in the last column when wrap is
+                                  " off and the line continues beyond the right of the screen
+"" Searching
+set hlsearch                      " highlight matches
+set incsearch                     " incremental searching
+set ignorecase                    " searches are case insensitive...
+set smartcase                     " ... unless they contain at least one capital letter
 
-set backspace=indent,eol,start    " Intuitive backspacing.
+function s:setupWrapping()
+  set wrap
+  set wrapmargin=2
+  set textwidth=72
+endfunction
 
-set hidden                        " Handle multiple buffers better.
+if has("autocmd")
+  " In Makefiles, use real tabs, not tabs expanded to spaces
+  au FileType make set noexpandtab
 
-set wildmenu                      " Enhanced command line completion.
-set wildmode=list:longest         " Complete files like a shell.
+  " Make sure all mardown files have the correct filetype set and setup wrapping
+  au BufRead,BufNewFile *.{md,markdown,mdown,mkd,mkdn,txt} setf markdown | call s:setupWrapping()
 
-set ignorecase                    " Case-insensitive searching.
-set smartcase                     " But case-sensitive if expression contains a capital letter.
+  " Treat JSON files like JavaScript
+  au BufNewFile,BufRead *.json set ft=javascript
 
-set number                        " Show line numbers.
-set ruler                         " Show cursor position.
+  " make Python follow PEP8 ( http://www.python.org/dev/peps/pep-0008/ )
+  au FileType python set softtabstop=4 tabstop=4 shiftwidth=4 textwidth=79
 
+  " Remember last location in file, but not for commit messages.
+  " see :help last-position-jump
+  au BufReadPost * if &filetype !~ '^git\c' && line("'\"") > 0 && line("'\"") <= line("$")
+    \| exe "normal! g`\"" | endif
+endif
+
+" provide some context when editing
 set scrolloff=3
-set shortmess=I
-set showmode
 
-set incsearch                     " Highlight matches as you type.
-set hlsearch                      " Highlight matches.
+" don't use Ex mode, use Q for formatting
+map Q gq
 
-set wrap                          " Turn on line wrapping.
-set scrolloff=3                   " Show 3 lines of context around the cursor.
+" clear the search buffer when hitting return
+:nnoremap <CR> :nohlsearch<cr>
 
-set title                         " Set the terminal's title
+" Insert the current directory into a command
+cmap <C-P> <C-R>=expand("%:p:h") . "/"
 
-set visualbell                    " No beeping.
+let mapleader=","
 
-set nobackup                      " Don't make a backup before overwriting a file.
-set nowritebackup                 " And again.
-" set directory=$HOME/.vim/tmp//,.  " Keep swap files in one location
+map <leader>gv :CommandTFlush<cr>\|:CommandT app/views<cr>
+map <leader>gc :CommandTFlush<cr>\|:CommandT app/controllers<cr>
+map <leader>gm :CommandTFlush<cr>\|:CommandT app/models<cr>
+map <leader>gh :CommandTFlush<cr>\|:CommandT app/helpers<cr>
+map <leader>gl :CommandTFlush<cr>\|:CommandT lib<cr>
+map <leader>gf :CommandTFlush<cr>\|:CommandT features<cr>
+map <leader>gg :topleft 100 :split Gemfile<cr>
+map <leader>f :CommandTFlush<cr>\|:CommandT<cr>
+" http://vimcasts.org/e/14
+cnoremap %% <C-R>=expand('%:h').'/'<cr>
+map <leader>F :CommandTFlush<cr>\|:CommandT %%<cr>
 
-" UNCOMMENT TO USE
-set tabstop=2                    " Global tab width.
-set shiftwidth=2                 " And again, related.
-set expandtab                    " Use spaces instead of tabs
+nnoremap <leader><leader> <c-^>
 
-set whichwrap+=<,>,[,]
+" find merge conflict markers
+nmap <silent> <leader>cf <ESC>/\v^[<=>]{7}( .*\|$)<CR>
 
-set laststatus=2                  " Show the status line all the time
-" Useful status information at bottom of screen
-set statusline=[%n]\ %<%.99f\ %h%w%m%r%y\ %{fugitive#statusline()}%{exists('*CapsLockStatusline')?CapsLockStatusline():''}%=%-16(\ %l,%c-%v\ %)%P
+command! KillWhitespace :normal :%s/ *$//g<cr><c-o><cr>
 
-" avoid Hit Enter to continue prompts
-:set cmdheight=3
+nnoremap <c-j> <c-w>j
+nnoremap <c-k> <c-w>k
+nnoremap <c-h> <c-w>h
+nnoremap <c-l> <c-w>l
 
-" Or use vividchalk
-colorscheme molokai 
+" disable cursor keys in normal mode
+map <Left>  :echo "no!"<cr>
+map <Right> :echo "no!"<cr>
+map <Up>    :echo "no!"<cr>
+map <Down>  :echo "no!"<cr>
 
-" Tab mappings.
-map <leader>tt :tabnew<cr>
-map <leader>te :tabedit
-map <leader>tc :tabclose<cr>
-map <leader>to :tabonly<cr>
-map <leader>tn :tabnext<cr>
-map <leader>tp :tabprevious<cr>
-map <leader>tf :tabfirst<cr>
-map <leader>tl :tablast<cr>
-map <leader>tm :tabmove
-map <leader>d :NERDTreeToggle<cr>
+set backupdir=~/.vim/_backup    " where to put backup files.
+set directory=~/.vim/_temp      " where to put swap files.
 
-" Uncomment to use Jamis Buck's file opening plugin
-" map <Leader>f :FuzzyFinderTextMate<Enter>
+if has("statusline") && !&cp
+  set laststatus=2  " always show the status bar
 
-" Controversial...swap colon and semicolon for easier commands
-"nnoremap ; :
-"nnoremap : ;
+  " Start the status line
+  set statusline=%f\ %m\ %r
 
-"vnoremap ; :
-"vnoremap : ;
+  " Add fugitive
+  set statusline+=%{fugitive#statusline()}
 
-" Automatic fold settings for specific files. Uncomment to use.
-"autocmd FileType ruby setlocal foldmethod=syntax
-"autocmd FileType css  setlocal foldmethod=indent shiftwidth=2 tabstop=2
-
-" For the MakeGreen plugin and Ruby RSpec. Uncomment to use.
-autocmd BufNewFile,BufRead *_spec.rb compiler rspec
-
-let g:bufExplorerShowRelativePath=1
-
-"autocmd VimEnter * silent! Gcd
-"autocmd VimEnter * NERDTree
-"autocmd VimEnter * wincmd w
-
-nnoremap j gj
-nnoremap k gk
-vnoremap j gj
-vnoremap k gk
-nnoremap <Down> gj
-nnoremap <Up> gk
-vnoremap <Down> gj
-vnoremap <Up> gk
-inoremap <Down> <C-o>gj
-inoremap <Up> <C-o>gk
-
-if has("gui_macvim")
-    let macvim_hig_shift_movement = 1
+  " Finish the statusline
+  set statusline+=Line:%l/%L[%p%%]
+  set statusline+=Col:%v
+  set statusline+=Buf:#%n
+  set statusline+=[%b][0x%B]
 endif
 
 "highlight underscore jst templates
@@ -142,4 +150,3 @@ augroup json_autocmd
   autocmd FileType json set foldmethod=syntax
   autocmd FileType json :%!json_xs -f json -t json-pretty
 augroup END 
-
