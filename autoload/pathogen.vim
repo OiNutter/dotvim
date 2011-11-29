@@ -1,12 +1,4 @@
 " pathogen.vim - path option manipulation
-<<<<<<< HEAD
-" Maintainer:   Tim Pope <vimNOSPAM@tpope.org>
-" Version:      1.2
-
-" Install in ~/.vim/autoload (or ~\vimfiles\autoload).
-"
-" API is documented below.
-=======
 " Maintainer:   Tim Pope <http://tpo.pe/>
 " Version:      2.0
 
@@ -18,15 +10,12 @@
 "
 " The API is documented inline below.  For maximum ease of reading,
 " :set foldmethod=marker
->>>>>>> mislav/master
 
 if exists("g:loaded_pathogen") || &cp
   finish
 endif
 let g:loaded_pathogen = 1
 
-<<<<<<< HEAD
-=======
 " Point of entry for basic default usage.  Give a directory name to invoke
 " pathogen#runtime_append_all_bundles() (defaults to "bundle"), or a full path
 " to invoke pathogen#runtime_prepend_subdirectories().  Afterwards,
@@ -41,7 +30,6 @@ function! pathogen#infect(...) abort " {{{1
   call pathogen#cycle_filetype()
 endfunction " }}}1
 
->>>>>>> mislav/master
 " Split a path into a list.
 function! pathogen#split(path) abort " {{{1
   if type(a:path) == type([]) | return a:path | endif
@@ -86,16 +74,11 @@ function! pathogen#uniq(list) abort " {{{1
   let i = 0
   let seen = {}
   while i < len(a:list)
-<<<<<<< HEAD
-    if has_key(seen,a:list[i])
-      call remove(a:list,i)
-=======
     if (a:list[i] ==# '' && exists('empty')) || has_key(seen,a:list[i])
       call remove(a:list,i)
     elseif a:list[i] ==# ''
       let i += 1
       let empty = 1
->>>>>>> mislav/master
     else
       let seen[a:list[i]] = 1
       let i += 1
@@ -120,14 +103,6 @@ function! pathogen#glob_directories(pattern) abort " {{{1
   return filter(pathogen#glob(a:pattern),'isdirectory(v:val)')
 endfunction "}}}1
 
-<<<<<<< HEAD
-" Prepend all subdirectories of path to the rtp, and append all after
-" directories in those subdirectories.
-function! pathogen#runtime_prepend_subdirectories(path) " {{{1
-  let sep    = pathogen#separator()
-  let before = pathogen#glob_directories(a:path.sep."*[^~]")
-  let after  = pathogen#glob_directories(a:path.sep."*[^~]".sep."after")
-=======
 " Turn filetype detection off and back on again if it was already enabled.
 function! pathogen#cycle_filetype() " {{{1
   if exists('g:did_load_filetypes')
@@ -154,7 +129,6 @@ function! pathogen#runtime_prepend_subdirectories(path) " {{{1
   let sep    = pathogen#separator()
   let before = filter(pathogen#glob_directories(a:path.sep."*"), '!pathogen#is_disabled(v:val)')
   let after  = filter(pathogen#glob_directories(a:path.sep."*".sep."after"), '!pathogen#is_disabled(v:val[0:-7])')
->>>>>>> mislav/master
   let rtp = pathogen#split(&rtp)
   let path = expand(a:path)
   call filter(rtp,'v:val[0:strlen(path)-1] !=# path')
@@ -176,15 +150,9 @@ function! pathogen#runtime_append_all_bundles(...) " {{{1
   let list = []
   for dir in pathogen#split(&rtp)
     if dir =~# '\<after$'
-<<<<<<< HEAD
-      let list +=  pathogen#glob_directories(substitute(dir,'after$',name.sep.'*[^~]'.sep.'after','')) + [dir]
-    else
-      let list +=  [dir] + pathogen#glob_directories(dir.sep.name.sep.'*[^~]')
-=======
       let list +=  filter(pathogen#glob_directories(substitute(dir,'after$',name,'').sep.'*[^~]'.sep.'after'), '!pathogen#is_disabled(v:val[0:-7])') + [dir]
     else
       let list +=  [dir] + filter(pathogen#glob_directories(dir.sep.name.sep.'*[^~]'), '!pathogen#is_disabled(v:val)')
->>>>>>> mislav/master
     endif
   endfor
   let &rtp = pathogen#join(pathogen#uniq(list))
@@ -196,21 +164,15 @@ let s:done_bundles = ''
 
 " Invoke :helptags on all non-$VIM doc directories in runtimepath.
 function! pathogen#helptags() " {{{1
-<<<<<<< HEAD
-  for dir in pathogen#split(&rtp)
-    if dir[0 : strlen($VIM)-1] !=# $VIM && isdirectory(dir.'/doc') && (!filereadable(dir.'/doc/tags') || filewritable(dir.'/doc/tags'))
-=======
   let sep = pathogen#separator()
   for dir in pathogen#split(&rtp)
     if (dir.sep)[0 : strlen($VIMRUNTIME)] !=# $VIMRUNTIME.sep && filewritable(dir.sep.'doc') == 2 && !empty(glob(dir.sep.'doc'.sep.'*')) && (!filereadable(dir.sep.'doc'.sep.'tags') || filewritable(dir.sep.'doc'.sep.'tags'))
->>>>>>> mislav/master
       helptags `=dir.'/doc'`
     endif
   endfor
 endfunction " }}}1
 
-<<<<<<< HEAD
-=======
+
 command! -bar Helptags :call pathogen#helptags()
 
 " Like findfile(), but hardcoded to use the runtimepath.
@@ -281,5 +243,4 @@ command! -bar -bang -range=1 -nargs=1 -complete=customlist,s:Findcomplete Vtabed
 command! -bar -bang -range=1 -nargs=1 -complete=customlist,s:Findcomplete Vpedit   :execute s:find(<count>,'pedit',<q-args>,<bang>1)
 command! -bar -bang -range=1 -nargs=1 -complete=customlist,s:Findcomplete Vread    :execute s:find(<count>,'read',<q-args>,<bang>1)
 
->>>>>>> mislav/master
 " vim:set ft=vim ts=8 sw=2 sts=2:
