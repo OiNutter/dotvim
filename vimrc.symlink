@@ -13,7 +13,8 @@ set encoding=utf-8
 call pathogen#infect()
 filetype plugin indent on
 
-color oinutter
+color molokai
+
 set nonumber
 set ruler       " show the cursor position all the time
 set cursorline
@@ -108,13 +109,13 @@ nnoremap <c-h> <c-w>h
 nnoremap <c-l> <c-w>l
 
 " disable cursor keys in normal mode
-map <Left>  :echo "no!"<cr>
-map <Right> :echo "no!"<cr>
-map <Up>    :echo "no!"<cr>
-map <Down>  :echo "no!"<cr>
+" map <Left>  :echo "no!"<cr>
+" map <Right> :echo "no!"<cr>
+" map <Up>    :echo "no!"<cr>
+" map <Down>  :echo "no!"<cr>
 
-set backupdir=~/.vim/_backup    " where to put backup files.
-set directory=~/.vim/_temp      " where to put swap files.
+set backupdir=~/.dotfiles/vim/_backup    " where to put backup files.
+set directory=~/.dotfiles/vim/_temp      " where to put swap files.
 
 if has("statusline") && !&cp
   set laststatus=2  " always show the status bar
@@ -137,7 +138,7 @@ au BufRead,BufNewFile *.jst set filetype=jst
 
 "highlight json files"
 au BufRead,BufNewFile *.json set filetype=json
-au! Syntax json source ~/.vim/ftplugin/json.vim
+au! Syntax json source ~/dotfiles/vim/ftplugin/json.vim
 map <leader>jt  <Esc>:%!json_xs -f json -t json-pretty<CR>
  
 augroup json_autocmd
