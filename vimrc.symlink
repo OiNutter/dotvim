@@ -46,7 +46,7 @@ set ignorecase                    " searches are case insensitive...
 set smartcase                     " ... unless they contain at least one capital letter
 
 function s:setupWrapping()
-  set wrap
+  set nowrap
   set wrapmargin=2
   set textwidth=72
 endfunction
