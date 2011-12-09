@@ -15,7 +15,7 @@ filetype plugin indent on
 
 color molokai
 
-set nonumber
+set number
 set ruler       " show the cursor position all the time
 set cursorline
 set showcmd     " display incomplete commands
