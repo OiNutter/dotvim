@@ -25,10 +25,11 @@ set showcmd     " display incomplete commands
 set hidden
 
 "" Whitespace
+set textwidth=100                  " max line length
 set nowrap                        " don't wrap lines
-set tabstop=2                     " a tab is two spaces
+set tabstop=4                     " a tab is two spaces
 set shiftwidth=2                  " an autoindent (with <<) is two spaces
-set expandtab                     " use spaces, not tabs
+"set expandtab                     " use spaces, not tabs
 set list                          " Show invisible characters
 set backspace=indent,eol,start    " backspace through everything in insert mode
 " List chars
