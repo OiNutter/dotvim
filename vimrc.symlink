@@ -115,8 +115,8 @@ nnoremap <c-l> <c-w>l
 " map <Up>    :echo "no!"<cr>
 " map <Down>  :echo "no!"<cr>
 
-set backupdir=~/.dotfiles/vim/_backup    " where to put backup files.
-set directory=~/.dotfiles/vim/_temp      " where to put swap files.
+set backupdir=~/.vim/_backup    " where to put backup files.
+set directory=~/.vim/_temp      " where to put swap files.
 
 if has("statusline") && !&cp
   set laststatus=2  " always show the status bar
